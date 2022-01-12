@@ -1,20 +1,12 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+// import { StatusBar } from 'expo-status-bar';
+// import { StyleSheet, Text, View } from 'react-native';
+// import React, { useState } from "react";
+import * as React from 'react';
+// import AppStack from "./navigation";
+import MainTabScreen from './screens/MainTabScreen';
 
 export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Hello Aditya Raj!!! Intha project mass pannidulaam.</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
+  return <MainTabScreen/>;
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+
