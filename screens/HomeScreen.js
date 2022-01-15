@@ -1,27 +1,47 @@
 import * as React from 'react';
-import { View, Text, Button } from 'react-native';
-import { db } from "../firebaseConfig";
+import { Layout, Text, Button, Input } from '@ui-kitten/components';
+import { collection, getDocs } from "firebase/firestore"; 
+import db from "../firebaseConfig";
 
 export default function HomeScreen({ navigation }) {
-    const adding = () => {
-        db.ref(`/orders/orderid/`).push({
-            userid: 1,
-            items:{
-                id:1,
-                quantity:5
-            },
-            cost: 1000,
-        });
+    const [category, setCategory] = React.useState([{id:0, name:"hello"}])
+    const [categoryCards, setCategoryCards] = React.useState(null)
+
+    // const adding = (item) => {
+    //     db.ref(`/category/`).push({
+    //         name: item
+    //     }).then(()=>{
+    //         db.ref(`/`).get().then((res)=> console.log(res))
+    //     });
+    // }
+
+    const getData = () => {
+        console.log("\n\n\n\ngetData:")
+        db.collection("category").get().then((querySnapshot)=>{
+            querySnapshot.forEach((doc) => {
+                setCategory([category,{id: doc.id, name: doc.data().name}])
+                setCategoryCards((categoryCards)?[categoryCards,<Text key={item.id}>{item.name}</Text>]:[])
+                console.log(`${doc.id} => ${doc.data().name}`);
+            })
+        })
     }
+
+    React.useEffect(()=>{
+        if (categoryCards)
+            categoryCards.forEach((card)=> console.log(card))
+    },[])
+
+    React.useLayoutEffect(()=>{
+        getData()
+    },[])
+
     return (
-        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+        <Layout style={{ flex: 1, alignItems: 'center' }}>
             <Text
-                onPress={() => alert('This is the "Home" screen.')}
-                style={{ fontSize: 26, fontWeight: 'bold' }}>Home Screen</Text>
-            <Button
-                title="Add"
-                onPress={adding}
-            />
-        </View>
+                onPress={getData}
+                style={{ fontSize: 26, fontWeight: 'bold' }}>Home Screen
+            </Text>
+            {categoryCards}
+        </Layout>
     );
 }
