@@ -7,6 +7,7 @@ import { BottomNavigation, BottomNavigationTab } from '@ui-kitten/components';
 import HomeScreen from './HomeScreen';
 import OrderStatusScreen from './OrderStatusScreen';
 import OrderHistoryScreen from './OrderHistoryScreen';
+import MenuScreen from './MenuScreen';
 
 const homeName = "Home";
 const orderStatus = "Status";
@@ -26,51 +27,12 @@ const CustomBottomTabBar = ({ navigation, state }) => {
 )}
 
 const MainTabScreen = () => (
-  <NavigationContainer>
     <Navigator tabBar = {props => <CustomBottomTabBar {...props} />}>
       <Screen name={homeName} component={HomeScreen}/>
       <Screen name={orderStatus} component={OrderStatusScreen}/>
       <Screen name={orderHistory} component={OrderHistoryScreen}/>
+      <Screen name={"Menu"} component={MenuScreen}/>
     </Navigator>
-  </NavigationContainer>
 )
-
-function MainTabScreenT() {
-  return (
-    <NavigationContainer>
-      <Tab.Navigator
-        initialRouteName={homeName}
-        screenOptions={({ route }) => ({
-          tabBarIcon: ({ focused, color, size }) => {
-            let iconName;
-            let rn = route.name;
-
-            if (rn === homeName) {
-              iconName = focused ? 'list' : 'list-outline';
-
-            } else if (rn === orderStatus) {
-              iconName = focused ? 'list' : 'list-outline';
-
-            } else if (rn === orderHistory) {
-              iconName = focused ? 'list' : 'list-outline';
-            }
-            return <Ionicons name={iconName} size={size} color={color} />;
-          },
-        })}
-        tabBarOptions={{
-          activeTintColor: 'tomato',
-          inactiveTintColor: 'grey',
-          labelStyle: { paddingBottom: 10, fontSize: 10 },
-          style: { padding: 10, height: 70}
-        }}>
-
-        <Tab.Screen name={homeName} component={HomeScreen} />
-        <Tab.Screen name={orderStatus} component={OrderStatusScreen} />
-        <Tab.Screen name={orderHistory} component={OrderHistoryScreen} />
-
-      </Tab.Navigator>
-    </NavigationContainer>
-  );
-}
 
 export default MainTabScreen;

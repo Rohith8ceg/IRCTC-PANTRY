@@ -1,47 +1,41 @@
 import * as React from 'react';
-import { Layout, Text, Button, Input } from '@ui-kitten/components';
-import { collection, getDocs } from "firebase/firestore"; 
+import { Layout, Text, Card, List } from '@ui-kitten/components';
 import db from "../firebaseConfig";
+import { View } from 'react-native';
 
 export default function HomeScreen({ navigation }) {
-    const [category, setCategory] = React.useState([{id:0, name:"hello"}])
-    const [categoryCards, setCategoryCards] = React.useState(null)
-
-    // const adding = (item) => {
-    //     db.ref(`/category/`).push({
-    //         name: item
-    //     }).then(()=>{
-    //         db.ref(`/`).get().then((res)=> console.log(res))
-    //     });
-    // }
+    const [category, setCategory] = React.useState(new Array(0))
 
     const getData = () => {
-        console.log("\n\n\n\ngetData:")
+        console.log("getData:")
         db.collection("category").get().then((querySnapshot)=>{
             querySnapshot.forEach((doc) => {
-                setCategory([category,{id: doc.id, name: doc.data().name}])
-                setCategoryCards((categoryCards)?[categoryCards,<Text key={item.id}>{item.name}</Text>]:[])
-                console.log(`${doc.id} => ${doc.data().name}`);
+                let temp = category
+                temp.push({id: doc.id, name: doc.data().name})
+                setCategory([...temp])
             })
         })
     }
-
-    React.useEffect(()=>{
-        if (categoryCards)
-            categoryCards.forEach((card)=> console.log(card))
-    },[])
 
     React.useLayoutEffect(()=>{
         getData()
     },[])
 
+    const renderCard = (param)=>{
+        return (
+            <Card status={'basic'} style={{flex:1, alignItems: 'center', flexGrow: 1 }} onPress={() => navigation.navigate('Menu',{navigation,...param.item})}>
+                <Text category={'h6'}>{param.item.name}</Text>
+            </Card>
+        )
+    }
+
     return (
-        <Layout style={{ flex: 1, alignItems: 'center' }}>
+        <Layout style={{ flex: 1, alignItems: 'center' }} >
             <Text
                 onPress={getData}
                 style={{ fontSize: 26, fontWeight: 'bold' }}>Home Screen
             </Text>
-            {categoryCards}
+            <List contentContainerStyle={{flexGrow: 1, justifyContent: 'center'}} style={{width: '60%'}} data={category} renderItem={renderCard} />
         </Layout>
     );
 }
