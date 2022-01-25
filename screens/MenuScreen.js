@@ -47,7 +47,8 @@ export default function MenuScreen({navigation, route}) {
                         [item.id]:  {
                             item_name: item.name,
                             qty: item.orderqty,
-                            price: item.orderqty*item.price
+                            price: item.orderqty*item.price,
+                            total: item.quantity
                         }
                     }
                 )
@@ -60,7 +61,8 @@ export default function MenuScreen({navigation, route}) {
                     [item.id]:  {
                         item_name: item.name,
                         qty: item.orderqty,
-                        price: item.orderqty*item.price
+                        price: item.orderqty*item.price,
+                        total: item.quantity
                     }
                 }
             )
