@@ -5,6 +5,7 @@ import HomeScreen from '../screens/HomeScreen'
 import MenuScreen from '../screens/MenuScreen'
 import OrderStatusScreen from '../screens/OrderStatusScreen'
 import OrderHistoryScreen from '../screens/OrderHistoryScreen'
+import CartScreen from '../screens/CartScreen'
 
 const Stack = createNativeStackNavigator()
 
@@ -13,6 +14,7 @@ const MenuNavigation = ()=>{
       <Stack.Navigator >
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Menu" component={MenuScreen} />
+        <Stack.Screen name="Cart" component={CartScreen} />
       </Stack.Navigator>
   )
 }

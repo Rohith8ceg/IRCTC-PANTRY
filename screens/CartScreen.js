@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Layout, Text, Card, List, Button } from '@ui-kitten/components';
-import GlobalState from '../contexts/GlobalState';
+import GlobalState from '../components/GlobalState';
 import db from "../firebaseConfig";
 
 export default function CartScreen({ navigation, route }) {
@@ -40,35 +40,12 @@ export default function CartScreen({ navigation, route }) {
     }
 
     const confirmBooking = () => {
-        // firebase.database().ref().child('/posts/' + newPostKey)
-        // .set({ title: "New title", body: "This is the new body" });
-        // for (var i = 0; i < cartlist.length; i++) {
-        //     for (var itemid in cartlist[i]) {
-        //         console.log(itemid)
-        //         db.doc(`item/${itemid}`).get().then((res) => {
-        //             let data = res.data()
-        //             console.log(data)
-        //             if (data) {
-        //                 console.log(data['quantity'])
-        //             }
-        //             //     data.forEach(item => {
-        //             //         item.get().then((res)=>{
-        //             //             console.log(res.data())
-        //             //             setItems(prevItems => [...prevItems,{id: item.id,...res.data(),qty: qty-cartlist[i][itemid]['qty']}])
-        //             //         })
-        //             // });
-        //         });
-        //     }
-        // }
-
-
-
         for (var i = 0; i < cartlist.length; i++) {
             for (var itemid in cartlist[i]) {
                 db.collection('item')
                     .doc(`${itemid}`)
                     .update({
-                        quantity: quantity-cartlist[i][itemid]['qty'],
+                        quantity: cartlist[i][itemid]['total']-cartlist[i][itemid]['qty'],
                     })
                     .then(() => {
                         console.log('Updated');
@@ -87,7 +64,7 @@ export default function CartScreen({ navigation, route }) {
         //     console.log('User added!');
         // });
 
-}
+    }
 
 
 return (

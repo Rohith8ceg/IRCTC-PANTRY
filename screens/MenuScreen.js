@@ -51,7 +51,8 @@ export default function MenuScreen({navigation, route}) {
                         [item.id]:  {
                             item_name: item.name,
                             qty: item.orderqty,
-                            price: item.orderqty*item.price
+                            price: item.orderqty*item.price,
+                            total: item.quantity
                         }
                     }
                 )
@@ -64,7 +65,8 @@ export default function MenuScreen({navigation, route}) {
                     [item.id]:  {
                         item_name: item.name,
                         qty: item.orderqty,
-                        price: item.orderqty*item.price
+                        price: item.orderqty*item.price,
+                        total: item.quantity
                     }
                 }
             )
@@ -141,7 +143,7 @@ export default function MenuScreen({navigation, route}) {
                 style={{ fontSize: 26, fontWeight: 'bold' }}>
                 {param && param.name}
             </Text>
-            { items.length &&
+            { items.length> 0 &&
             <>
                 <List style={styles.list} contentContainerStyle={styles.container} data={items} renderItem={renderCard} />
                 <Button onPress={addToCart}>View Cart</Button>
