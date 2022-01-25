@@ -8,10 +8,13 @@ import HomeScreen from './HomeScreen';
 import OrderStatusScreen from './OrderStatusScreen';
 import OrderHistoryScreen from './OrderHistoryScreen';
 import MenuScreen from './MenuScreen';
+import CartScreen from './CartScreen';
 
 const homeName = "Home";
 const orderStatus = "Status";
 const orderHistory = "History";
+const menuScreen = "Menu";
+const cartScreen = "Cart";
 
 const { Navigator, Screen } = createBottomTabNavigator();
 
@@ -31,7 +34,8 @@ const MainTabScreen = () => (
       <Screen name={homeName} component={HomeScreen}/>
       <Screen name={orderStatus} component={OrderStatusScreen}/>
       <Screen name={orderHistory} component={OrderHistoryScreen}/>
-      <Screen name={"Menu"} component={MenuScreen}/>
+      <Screen name={menuScreen} component={MenuScreen}/>
+      <Screen name={cartScreen} component={CartScreen}/>
     </Navigator>
 )
 

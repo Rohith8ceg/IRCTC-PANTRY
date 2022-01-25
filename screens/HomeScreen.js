@@ -3,7 +3,7 @@ import { Layout, Text, Card, List } from '@ui-kitten/components';
 import db from "../firebaseConfig";
 import { View } from 'react-native';
 
-export default function HomeScreen({ navigation }) {
+export default function HomeScreen({route, navigation }) {
     const [category, setCategory] = React.useState(new Array(0))
 
     const getData = () => {
@@ -16,6 +16,10 @@ export default function HomeScreen({ navigation }) {
             })
         })
     }
+
+    console.log(category)
+    // const data = route.params;
+    // console.log(data['list'])
 
     React.useLayoutEffect(()=>{
         getData()
@@ -31,10 +35,10 @@ export default function HomeScreen({ navigation }) {
 
     return (
         <Layout style={{ flex: 1, alignItems: 'center' }} >
-            <Text
+            {/* <Text
                 onPress={getData}
                 style={{ fontSize: 26, fontWeight: 'bold' }}>Home Screen
-            </Text>
+            </Text> */}
             <List contentContainerStyle={{flexGrow: 1, justifyContent: 'center'}} style={{width: '60%'}} data={category} renderItem={renderCard} />
         </Layout>
     );
