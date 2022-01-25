@@ -1,38 +1,36 @@
-import * as React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import { BottomNavigation, BottomNavigationTab } from '@ui-kitten/components';
+import * as React from 'react'
+import { NavigationContainer } from '@react-navigation/native'
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
+import { BottomNavigation, BottomNavigationTab } from '@ui-kitten/components'
 
-import HomeScreen from './HomeScreen';
-import OrderStatusScreen from './OrderStatusScreen';
-import OrderHistoryScreen from './OrderHistoryScreen';
-import MenuScreen from './MenuScreen';
+import { MenuNavigation, StatusNavigation, HistoryNavigation } from '../components/Navigation'
 
-const homeName = "Home";
-const orderStatus = "Status";
-const orderHistory = "History";
-
-const { Navigator, Screen } = createBottomTabNavigator();
+const { Navigator, Screen } = createBottomTabNavigator()
 
 const CustomBottomTabBar = ({ navigation, state }) => {
   return (
   <BottomNavigation
     selectedIndex={state.index}
     onSelect={index => {navigation.navigate(state.routeNames[index])}} >
-      <BottomNavigationTab title={homeName} />
-      <BottomNavigationTab title={orderStatus} />
-      <BottomNavigationTab title={orderHistory} />
+      <BottomNavigationTab title="Home" />
+      <BottomNavigationTab title="Status" />
+      <BottomNavigationTab title="History" />
     </BottomNavigation>
 )}
 
 const MainTabScreen = () => (
-    <Navigator tabBar = {props => <CustomBottomTabBar {...props} />}>
-      <Screen name={homeName} component={HomeScreen}/>
-      <Screen name={orderStatus} component={OrderStatusScreen}/>
-      <Screen name={orderHistory} component={OrderHistoryScreen}/>
-      <Screen name={"Menu"} component={MenuScreen}/>
+  <NavigationContainer>
+    <Navigator 
+      screenOptions={{
+        headerShown: false
+      }} 
+      tabBar = {props => <CustomBottomTabBar {...props} />} 
+    >
+      <Screen name="H" component={MenuNavigation}/>
+      <Screen name="S" component={StatusNavigation}/>
+      <Screen name="Hi" component={HistoryNavigation}/>
     </Navigator>
+  </NavigationContainer>
 )
 
-export default MainTabScreen;
+export default MainTabScreen
