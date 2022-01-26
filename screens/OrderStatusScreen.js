@@ -1,15 +1,18 @@
 import * as React from 'react'
-import { Layout, Text, Card, List } from '@ui-kitten/components'
+import { Layout, Text, Card, List, Button } from '@ui-kitten/components'
 import { StyleSheet } from 'react-native'
 import db from "../firebaseConfig"
 import UserContext from '../components/UserContext'
 import LoginScreen from './LoginScreen'
+import GlobalState from '../components/GlobalState'
 
 export default function OrderStatusScreen({ navigation }) {
     const [orders, setOrders] = React.useState(new Array(0))
     const [user, setUser] = React.useContext(UserContext)
+    const [cartlist, setCartlist] = React.useContext(GlobalState);
 
     const getData = () => {
+        setCartlist("")
         if(!user.phone)
             return null
         setOrders([])
@@ -96,6 +99,7 @@ export default function OrderStatusScreen({ navigation }) {
                 <LoginScreen />
             </Layout>
         }
+        {/* <Button onPress={()=>{ navigation.navigate('Home')}}>New Booking</Button> */}
         </>
     )
 }

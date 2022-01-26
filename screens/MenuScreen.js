@@ -128,7 +128,7 @@ export default function MenuScreen({navigation, route}) {
     const renderCard = (param)=>{
         console.log(param)
         return (
-            <Card status={'basic'} style={styles.card} onPress={() => navigation.navigate('Menu',{navigation,...param.item})}>
+            <Card status={'basic'} style={styles.card} >
                 <Text category={'h6'}>{param.item.name}</Text>
                 <Text>Price: {param.item.price}</Text>
                 <Text>Quantity: {param.item.orderqty}</Text> 
@@ -148,13 +148,13 @@ export default function MenuScreen({navigation, route}) {
         console.log("cart:\n",cart)
         setCartlist([...cart])
         // setCartlist([...prevList, list])
-        navigation.navigate('Cart')
+        // navigation.navigate("Crt", { screen: "Cart" });
+        navigation.push('Cart')
     }
 
     return (
         <Layout style={styles.layout}>
             <Text
-                onPress={() => navigation.navigate('Home')}
                 style={{ fontSize: 26, fontWeight: 'bold' }}>
                 {param && param.name}
             </Text>

@@ -15,11 +15,15 @@ export default function CartScreen({ navigation, route }) {
   const [name, setName] = React.useState("");
   const [seat, setSeat] = React.useState("");
   const [phone, setPhone] = React.useState();
+  const [train, setTrain] = React.useState();
   //   const [docs, setDocs] = React.useState({ user: null, order: null });
   const [userDoc, setUserDoc] = React.useState(undefined);
   const [orderDoc, setOrderDoc] = React.useState(undefined);
 
   React.useLayoutEffect(() => {
+    // if(cartlist.length==0){
+    //     navigation.navigate('Home')
+    // }
     console.clear();
     console.log(cartlist);
     var bill = 0;
@@ -30,6 +34,7 @@ export default function CartScreen({ navigation, route }) {
         item_name: item["name"],
         qty: item["orderqty"],
         cost: item["total"],
+
       });
     });
     setFinallist([...temp]);
@@ -38,6 +43,11 @@ export default function CartScreen({ navigation, route }) {
   }, []);
 
   const renderCard = (param) => {
+    console.log(cartlist.length)
+    // if(cartlist.length==0){
+    //   navigation.navigate('Home')
+    //   // navigation.navigate("Crt", { screen: "Home" });
+    // }
     return (
       <Card
         status={"basic"}
@@ -63,7 +73,18 @@ export default function CartScreen({ navigation, route }) {
     });
   }
 
-
+  function clearState(){
+      console.log("clear")
+      setUser("")
+      setName("")
+      setPhone("")
+      setTrain("")
+      setSeat("")
+      setFinallist("")
+      setBill("")
+      setUserDoc("")
+      setOrderDoc("")
+  }
 
   async function getUserRef() {
     await db
@@ -109,10 +130,15 @@ export default function CartScreen({ navigation, route }) {
       .collection("orders")
       .add({
         cart: string,
+        location: {
+            seat_location: seat,
+            train_num: train
+        },
         datetime: new Date(),
         status: 0,
         total: billamt,
         userid: userDoc,
+        name: name
       })
       .then((res) => {
         console.log("Order added!");
@@ -132,8 +158,6 @@ export default function CartScreen({ navigation, route }) {
         order: firebase.firestore.FieldValue.arrayUnion(orderDoc),
         }).then((res)=>{
           console.log(res)
-        
-        navigation.navigate("S", { screen: "Status" });
       });
     }
   }
@@ -149,6 +173,10 @@ export default function CartScreen({ navigation, route }) {
     if (orderDoc) {
       console.log("Docs:\n", orderDoc.path);
       updateUserOrderRef();
+      clearState()
+      navigation.replace("Menu")
+      navigation.replace("Cart")
+      navigation.navigate("S", { screen: "Status" });
     }
   }, [orderDoc]);
 
@@ -160,44 +188,57 @@ export default function CartScreen({ navigation, route }) {
   }
 
   return (
-    <Layout style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      {/* <Text
-                onPress={() => navigation.navigate('Home')}
-                style={{ fontSize: 26, fontWeight: 'bold' }}>Cart Screen</Text> */}
-      <List
-        contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}
-        style={{ width: "60%" }}
-        data={cartlist}
-        renderItem={renderCard}
-      />
-      <Text category={"h6"}>{billamt}</Text>
-      <Text style={styles.text}>Name</Text>
-      <TextInput
-        numberOfLines={1}
-        onChangeText={(text) => setName(text)}
-        placeholder="Enter name"
-        placeholderTextColor="#666"
-      />
-      <Text style={styles.text}>Phone Number</Text>
-      <TextInput
-        numberOfLines={1}
-        onChangeText={(text) => setPhone(text)}
-        placeholder={"Enter 10 digit number"}
-        placeholderTextColor="#666"
-        keyboardType="number-pad"
-        maxLength={10}
-      />
-      <Text style={styles.text}>Compartment and Seat Number</Text>
-      <TextInput
-        numberOfLines={1}
-        onChangeText={(text) => setSeat(text)}
-        placeholder={"D5 86"}
-        placeholderTextColor="#666"
-        maxLength={10}
-      />
-      <Button onPress={confirmBooking}>Confirm booking</Button>
-    </Layout>
+      <Layout style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+        {/* <Text
+                  onPress={() => navigation.navigate('Home')}
+                  style={{ fontSize: 26, fontWeight: 'bold' }}>Cart Screen</Text> */}
+        <List
+          contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}
+          style={{ width: "60%" }}
+          data={cartlist}
+          renderItem={renderCard}
+        />
+        <Text category={"h6"}>{billamt}</Text>
+        
+        
+        <Text style={styles.text}>Name</Text>
+        <TextInput
+          numberOfLines={1}
+          onChangeText={(text) => setName(text)}
+          placeholder="Enter name"
+          placeholderTextColor="#666"
+        />
+        <Text style={styles.text}>Phone Number</Text>
+        <TextInput
+          numberOfLines={1}
+          onChangeText={(text) => setPhone(text)}
+          placeholder={"Enter 10 digit number"}
+          placeholderTextColor="#666"
+          keyboardType="number-pad"
+          maxLength={10}
+        />
+        <Text style={styles.text}>Train Number</Text>
+        <TextInput
+          numberOfLines={1}
+          onChangeText={(text) => setTrain(text)}
+          placeholder={"Enter train number"}
+          placeholderTextColor="#666"
+          keyboardType="number-pad"
+          maxLength={10}
+        />
+        <Text style={styles.text}>Compartment and Seat Number</Text>
+        <TextInput
+          numberOfLines={1}
+          onChangeText={(text) => setSeat(text)}
+          placeholder={"D5 86"}
+          placeholderTextColor="#666"
+          maxLength={10}
+        />
+        <Button onPress={confirmBooking}>Confirm booking</Button> 
+      </Layout>
+    
   );
+              
 }
 
 const styles = StyleSheet.create({
