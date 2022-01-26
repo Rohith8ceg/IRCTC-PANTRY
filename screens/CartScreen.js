@@ -1,166 +1,223 @@
-import * as React from 'react';
-import { View, TextInput, StyleSheet } from 'react-native';
-import { Layout, Text, Card, List, Button } from '@ui-kitten/components';
-import GlobalState from '../components/GlobalState';
+import * as React from "react";
+import { View, TextInput, StyleSheet } from "react-native";
+import { Layout, Text, Card, List, Button } from "@ui-kitten/components";
+import GlobalState from "../components/GlobalState";
+import UserContext from "../components/UserContext";
 import db from "../firebaseConfig";
+import firebase from "firebase";
+
 
 export default function CartScreen({ navigation, route }) {
+  const [finalList, setFinallist] = React.useState(new Array(0));
+  const [billamt, setBill] = React.useState();
+  const [cartlist, setCartlist] = React.useContext(GlobalState);
+  const [user, setUser] = React.useContext(UserContext);
+  const [name, setName] = React.useState("");
+  const [seat, setSeat] = React.useState("");
+  const [phone, setPhone] = React.useState();
+  //   const [docs, setDocs] = React.useState({ user: null, order: null });
+  const [userDoc, setUserDoc] = React.useState(undefined);
+  const [orderDoc, setOrderDoc] = React.useState(undefined);
 
-    const [finalList, setFinallist] = React.useState(new Array(0))
-    const [billamt, setBill] = React.useState()
-    const [cartlist, setCartlist] = React.useContext(GlobalState);
-    const [name, setName] = React.useState("")
-    const [seat, setSeat] = React.useState("")
-    const [phone, setPhone] = React.useState()
+  React.useLayoutEffect(() => {
+    console.clear();
+    console.log(cartlist);
+    var bill = 0;
+    let temp = [];
+    cartlist.forEach((item) => {
+      bill += item["total"];
+      temp.push({
+        item_name: item["name"],
+        qty: item["orderqty"],
+        cost: item["total"],
+      });
+    });
+    setFinallist([...temp]);
+    setBill(bill);
+    console.log("Bill -" + bill);
+  }, []);
 
-    React.useEffect(() => {
-        console.log(cartlist)
-        // const data = route.params
-        // var cartlist = data['cartlist']
-        var bill = 0
-        for (var i = 0; i < cartlist.length; i++) {
-            for (var itemid in cartlist[i]) {
-                console.log(cartlist[i][itemid]['item_name'])
-                console.log(cartlist[i][itemid]['qty'])
-                console.log(cartlist[i][itemid]['price'])
-                bill += cartlist[i][itemid]['price']
-                let temp = finalList
-                temp.push({ item_name: cartlist[i][itemid]['item_name'], qty: cartlist[i][itemid]['qty'], price: cartlist[i][itemid]['price'] })
-                setFinallist([...temp])
-            }
-        }
-        setBill(bill)
-        console.log("Bill -" + bill)
-    }, [])
+  const renderCard = (param) => {
+    return (
+      <Card
+        status={"basic"}
+        style={{ flex: 1, alignItems: "center", flexGrow: 1 }}
+      >
+        <Text category={"h6"}>{"Name: " + param.item.name}</Text>
+        <Text category={"h6"}>{"Quantity: " + param.item.orderqty}</Text>
+        <Text category={"h6"}>{"Price: " + param.item.total}</Text>
+      </Card>
+    );
+  };
 
-    const renderCard = (param) => {
-        return (
-            <Card status={'basic'} style={{ flex: 1, alignItems: 'center', flexGrow: 1 }}>
-                <Text category={'h6'}>{"Name: " + param.item.item_name}</Text>
-                <Text category={'h6'}>{"Quantity: " + param.item.qty}</Text>
-                <Text category={'h6'}>{"Price: " + param.item.price}</Text>
-            </Card>
-        )
-    }
-
-    const confirmBooking = () => {
-        // modifying quantity based on selected items
-        for (var i = 0; i < cartlist.length; i++) {
-            for (var itemid in cartlist[i]) {
-                db.collection('item')
-                    .doc(`${itemid}`)
-                    .update({
-                        quantity: cartlist[i][itemid]['total'] - cartlist[i][itemid]['qty'],
-                    })
-                    .then(() => {
-                        console.log('Updated');
-                    });
-            }
-        }
-
-        // adding user
-        var flag=0
-        db.collection("users").get().then(function(querySnapshot) {
-            querySnapshot.forEach(function(doc) {
-                var data = doc.data()
-                var odr = data['order']
-                console.log(odr)
-                if(data['phone']==phone){
-                    console.log("User exists")
-                    flag=1
-                    db.collection('users')
-                    .doc(doc.id)
-                    .update({
-                        order: odr.push('/orders/')
-                    })
-                }
-                // console.log(doc.id, " => ", doc.data());
-            });
-            //first time user
-            if(flag==0){
-                db.collection('users')
-                .add({
-                    name,
-                    order: finalList,
-                    phone,
-                })
-                .then(() => {
-                    console.log('User added!');
-                });
-            }
-        });
-
-        //adding order
-        var string = JSON.stringify(finalList);
-        db.collection('orders')
-        .add({
-            cart: string,
-            datetime: new Date(),
-            status: 1,
-            total: 0,
-            userid: "/users/"
+  async function updateItemQty() {
+    await cartlist.forEach((item) => {
+      db.collection("item")
+        .doc(`${item.id}`)
+        .update({
+          quantity: item.quantity,
         })
         .then(() => {
-            console.log('Order added!');
+          console.log("Updated");
         });
+    });
+  }
+
+
+
+  async function getUserRef() {
+    await db
+      .collection("users")
+      .where("phone", "==", Number(phone))
+      .get()
+      .then((res) => {
+        console.log("Res:\n", res);
+        if (!res.empty) {
+          setUser({ name: null, phone: null, error: true });
+          let data = res.docs[0].data();
+          setUserDoc(res.docs[0].ref);
+          console.log("userdocs:", res.docs[0].ref);
+          // userDoc = res.docs[0]
+          console.log("fetched user:\n", data);
+          setUser({ name: data.name, phone: data.phone, error: false });
+        } else {
+          db.collection("users")
+            .add({
+              name: name,
+              order: [],
+              phone: Number(phone),
+            })
+            .then((res) => {
+              console.log("User added!");
+              res.get().then((res) => {
+                // userDoc = res
+                console.log("docs:", res.ref.path);
+                setUserDoc(res.ref);
+                setUser({ name: null, phone: null, error: true });
+                let data = res.data();
+                setUser({ name: data.name, phone: data.phone, error: false });
+              });
+            });
+        }
+      });
+    if (userDoc !== undefined) console.log("userDoc:\n", userDoc.path);
+  }
+
+  async function pushOrder() {
+    var string = JSON.stringify(finalList);
+    await db
+      .collection("orders")
+      .add({
+        cart: string,
+        datetime: new Date(),
+        status: 0,
+        total: billamt,
+        userid: userDoc,
+      })
+      .then((res) => {
+        console.log("Order added!");
+        res.get().then((res) => {
+          // orderDoc = res
+          console.log("orderdocs:", res);
+          setOrderDoc(res.ref);
+        //   console.log("Order:\n", orderDoc.path);
+        });
+      });
+  }
+
+  async function updateUserOrderRef() {
+    if (orderDoc){
+        console.log(userDoc)
+        await userDoc.update({
+        order: firebase.firestore.FieldValue.arrayUnion(orderDoc),
+        }).then((res)=>{
+          console.log(res)
+        
+        navigation.navigate("S", { screen: "Status" });
+      });
     }
+  }
+  
+  React.useEffect(() => {
+    if (userDoc) {
+      console.log("Docs:\n", userDoc.path);
+      pushOrder();
+    }
+  }, [userDoc]);
 
+  React.useEffect(() => {
+    if (orderDoc) {
+      console.log("Docs:\n", orderDoc.path);
+      updateUserOrderRef();
+    }
+  }, [orderDoc]);
 
-    return (
-        <Layout style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-            {/* <Text
+  async function confirmBooking() {
+    await updateItemQty();
+    await getUserRef();
+    // if (userDoc) await pushOrder();
+    // if (orderDoc) await updateUserOrderRef();
+  }
+
+  return (
+    <Layout style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+      {/* <Text
                 onPress={() => navigation.navigate('Home')}
                 style={{ fontSize: 26, fontWeight: 'bold' }}>Cart Screen</Text> */}
-            <List contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }} style={{ width: '60%' }} data={finalList} renderItem={renderCard} />
-            <Text category={'h6'}>{billamt}</Text>
-            <Text style={styles.text}>Name</Text>
-            <TextInput
-                numberOfLines={1}
-                onChangeText={(text) => setName(text)}
-                placeholder="Enter name"
-                placeholderTextColor="#666"
-            />
-            <Text style={styles.text}>Phone Number</Text>
-            <TextInput
-                numberOfLines={1}
-                onChangeText={(text) => setPhone(text)}
-                placeholder={"+91"}
-                placeholderTextColor="#666"
-                keyboardType="number-pad"
-                maxLength={10}
-            />
-            <Text style={styles.text}>Compartment and Seat Number</Text>
-            <TextInput
-                numberOfLines={1}
-                onChangeText={(text) => setSeat(text)}
-                placeholder={"D5 86"}
-                placeholderTextColor="#666"
-                maxLength={10}
-            />
-            <Button onPress={confirmBooking}>Confirm booking</Button>
-        </Layout>
-
-    );
+      <List
+        contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}
+        style={{ width: "60%" }}
+        data={cartlist}
+        renderItem={renderCard}
+      />
+      <Text category={"h6"}>{billamt}</Text>
+      <Text style={styles.text}>Name</Text>
+      <TextInput
+        numberOfLines={1}
+        onChangeText={(text) => setName(text)}
+        placeholder="Enter name"
+        placeholderTextColor="#666"
+      />
+      <Text style={styles.text}>Phone Number</Text>
+      <TextInput
+        numberOfLines={1}
+        onChangeText={(text) => setPhone(text)}
+        placeholder={"Enter 10 digit number"}
+        placeholderTextColor="#666"
+        keyboardType="number-pad"
+        maxLength={10}
+      />
+      <Text style={styles.text}>Compartment and Seat Number</Text>
+      <TextInput
+        numberOfLines={1}
+        onChangeText={(text) => setSeat(text)}
+        placeholder={"D5 86"}
+        placeholderTextColor="#666"
+        maxLength={10}
+      />
+      <Button onPress={confirmBooking}>Confirm booking</Button>
+    </Layout>
+  );
 }
 
 const styles = StyleSheet.create({
-    text: {
-        color: "#051d5f",
-        fontSize: 20,
-        fontWeight: "bold",
-      },
-      input: {
-        borderWidth: 1,
-        borderColor: "#777",
-        padding: 10,
-        marginTop: -20,
-        marginLeft: 140,
-        marginBottom: 5,
-        borderRadius: 5,
-        width: 250,
-        height: 80,
-        color: "white",
-        backgroundColor: "#465881",
-        textAlignVertical: "top",
-      },
-})
+  text: {
+    color: "#051d5f",
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: "#777",
+    padding: 10,
+    marginTop: -20,
+    marginLeft: 140,
+    marginBottom: 5,
+    borderRadius: 5,
+    width: 250,
+    height: 80,
+    color: "white",
+    backgroundColor: "#465881",
+    textAlignVertical: "top",
+  },
+});

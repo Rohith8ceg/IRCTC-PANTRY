@@ -16,7 +16,7 @@ export default function OrderStatusScreen({ navigation }) {
         console.log("getData:")
         db
         .collection("users")
-        .where("phone", "==", 9745862849)
+        .where("phone", "==", user.phone)
         .get()
         .then((querySnapshot)=>{
             querySnapshot.forEach((doc) => {

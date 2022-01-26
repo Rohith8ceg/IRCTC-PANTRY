@@ -18,11 +18,12 @@ export default function LoginScreen (props) {
       .where("phone", "==", Number(phone))
       .get()
       .then((res)=>{
-        if(res)
-          setUser({name: null, phone:null, error:true })
-        let data = res.docs[0].data()
-        console.log(data)
-        setUser({name: data.name, phone:data.phone, error:false })
+        if (res) {
+          setUser({ name: null, phone: null, error: true });
+          let data = res.docs[0].data();
+          console.log(data);
+          setUser({ name: data.name, phone: data.phone, error: false });
+        }
       })
     }
     else
@@ -64,6 +65,10 @@ export default function LoginScreen (props) {
                 value={phone}
                 style={styles.margin}
                 onChangeText={nextPhone => setPhone(nextPhone)}
+                placeholder={"Enter 10 digit number"}
+                placeholderTextColor="#666"
+                keyboardType="number-pad"
+                maxLength={10}
               />
               <Button onPress={login} size={'small'} >
                 Login

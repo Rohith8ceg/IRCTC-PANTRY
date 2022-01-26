@@ -32,64 +32,76 @@ export default function MenuScreen({navigation, route}) {
 
     const addQty = (item) => {
         // setItems(prevItems => [...prevItems,{orderqty: item.orderqty+1}])
-        item.orderqty = item.orderqty+1;
-        if(list){
-            var flag=0
-            for (var i=0; i<list.length; i++) {
-                // console.log(list[i])
-                for(var itemid in list[i]){
-                    if(itemid==item.id){
-                        flag=1
-                        list[i][item.id]['qty']+=1
-                        list[i][item.id]['price']+=item.price
-                    }
-                }
-            }
-            if(flag==0){
-                list.push(
-                    {
-                        [item.id]:  {
-                            item_name: item.name,
-                            qty: item.orderqty,
-                            price: item.orderqty*item.price,
-                            total: item.quantity
-                        }
-                    }
-                )
-            }
-            console.log(list)               
-        }
-        else{
-            list.push(
-                {
-                    [item.id]:  {
-                        item_name: item.name,
-                        qty: item.orderqty,
-                        price: item.orderqty*item.price,
-                        total: item.quantity
-                    }
-                }
-            )
-        }
+        // item.orderqty = item.orderqty+1;
+        let temp = items
+        let t = temp.findIndex(x => x.id == item.id)
+        temp[t].orderqty += 1
+        temp[t].quantity -= 1
+        setItems([...temp])
+        console.debug(temp[t])
+        // if(list){
+        //     var flag=0
+        //     for (var i=0; i<list.length; i++) {
+        //         // console.log(list[i])
+        //         for(var itemid in list[i]){
+        //             if(itemid==item.id){
+        //                 flag=1
+        //                 list[i][item.id]['qty']+=1
+        //                 list[i][item.id]['price']+=item.price
+        //             }
+        //         }
+        //     }
+        //     if(flag==0){
+        //         list.push(
+        //             {
+        //                 [item.id]:  {
+        //                     item_name: item.name,
+        //                     qty: item.orderqty,
+        //                     price: item.orderqty*item.price,
+        //                     total: item.quantity
+        //                 }
+        //             }
+        //         )
+        //     }
+        // }
+        // else{
+        //     list.push(
+        //         {
+        //             [item.id]:  {
+        //                 item_name: item.name,
+        //                 qty: item.orderqty,
+        //                 price: item.orderqty*item.price,
+        //                 total: item.quantity
+        //             }
+        //         }
+        //         )
+        // }
+        console.log("list:\n",list)               
         // setFinalList(temp)
         // console.log(finalList)
     }
 
     const lessQty = (item) => {
-        item.orderqty = item.orderqty-1;
-        if(list){
-            var flag=0
-            for (var i=0; i<list.length; i++) {
-                for(var itemid in list[i]){
-                    if(itemid==item.id){
-                        flag=1
-                        list[i][item.id]['qty']-=1
-                        list[i][item.id]['price']-=item.price
-                    }
-                }
-            }
-            console.log(list)
-        }
+        // item.orderqty = item.orderqty-1;
+        let temp = items
+        let t = temp.findIndex(x => x.id == item.id)
+        temp[t].orderqty -= 1
+        temp[t].quantity += 1
+        console.debug(temp[t])
+        setItems([...temp])
+    //     if(list){
+    //         var flag=0
+    //         for (var i=0; i<list.length; i++) {
+    //             for(var itemid in list[i]){
+    //                 if(itemid==item.id){
+    //                     flag=1
+    //                     list[i][item.id]['qty']-=1
+    //                     list[i][item.id]['price']-=item.price
+    //                 }
+    //             }
+    //         }
+    //     }
+        console.log("list:\n",list)
     }
 
     // React.useLayoutEffect(() => {
@@ -119,19 +131,22 @@ export default function MenuScreen({navigation, route}) {
             <Card status={'basic'} style={styles.card} onPress={() => navigation.navigate('Menu',{navigation,...param.item})}>
                 <Text category={'h6'}>{param.item.name}</Text>
                 <Text>Price: {param.item.price}</Text>
-                <Text>Quantity: {param.item.orderqty}</Text>
-                {param.item.quantity && 
-                    <ButtonGroup size={'small'}>
-                        <Button onPress={() => addQty(param.item)}>+</Button>
-                        <Button onPress={() => lessQty(param.item)}>-</Button>
-                    </ButtonGroup>
-                 } 
+                <Text>Quantity: {param.item.orderqty}</Text> 
+                <ButtonGroup size={'small'}>
+                    <Button disabled={param.item.quantity === 0} onPress={() => addQty(param.item)}>+</Button>
+                    <Button disabled={param.item.orderqty === 0} onPress={() => lessQty(param.item)}>-</Button>
+                </ButtonGroup>
             </Card>
         )
     }
 
     const addToCart = () => {
-        setCartlist(list)
+        let cart = items.filter(x => x.orderqty > 0)
+        cart.forEach(item => {
+            item.total = item.orderqty * item.price
+        })
+        console.log("cart:\n",cart)
+        setCartlist([...cart])
         // setCartlist([...prevList, list])
         navigation.navigate('Cart')
     }
