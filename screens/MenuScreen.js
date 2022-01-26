@@ -1,7 +1,8 @@
 import * as React from 'react';
+import { StyleSheet } from 'react-native';
 import db from "../firebaseConfig";
 import { Layout, Text, List, Card, Button, ButtonGroup } from '@ui-kitten/components';
-import GlobalState from '../contexts/GlobalState';
+import GlobalState from '../components/GlobalState';
 
 export default function MenuScreen({navigation, route}) {
 
@@ -15,14 +16,17 @@ export default function MenuScreen({navigation, route}) {
         console.log("getData:")
         db.doc(`category/${param.id}`).get().then((res)=>{
             let data = res.data()
-            let items = data.item
-            if (items)
-                items.forEach(item => {
+            let tempItems = data.item
+            if (tempItems){
+                let temp = []
+                tempItems.forEach(item => {
                     item.get().then((res)=>{
-                        console.log(res.data())
-                        setItems(prevItems => [...prevItems,{id: item.id,...res.data(),orderqty: 0}])
+                        temp.push({id: item.id,...res.data(),orderqty: 0})
+                        console.log("temp:\n",temp)
+                        setItems(temp)
                     })
-            });
+                });
+            }
         });
     }
 
@@ -97,9 +101,22 @@ export default function MenuScreen({navigation, route}) {
         console.log(items)
     },[items.name])
     
+    React.useLayoutEffect(()=>{
+        console.log("items:\n",items)
+        
+    },[items])
+
+    const styles = StyleSheet.create({
+        card:{flex:1, alignItems: 'center', flexGrow: 1 },
+        layout:{ flex: 1, alignItems: 'center', justifyContent: 'center' },
+        list: {flexGrow:0, marginTop:50, width:'80%', minHeight:'60%'},
+        container: {flexGrow:1, justifyContent: 'space-evenly', alignItems:'stretch'}
+    })
+    
     const renderCard = (param)=>{
+        console.log(param)
         return (
-            <Card status={'basic'} style={{flex:1, alignItems: 'center', flexGrow: 1 }} onPress={() => navigation.navigate('Menu',{navigation,...param.item})}>
+            <Card status={'basic'} style={styles.card} onPress={() => navigation.navigate('Menu',{navigation,...param.item})}>
                 <Text category={'h6'}>{param.item.name}</Text>
                 <Text>Price: {param.item.price}</Text>
                 <Text>Quantity: {param.item.orderqty}</Text>
@@ -120,16 +137,18 @@ export default function MenuScreen({navigation, route}) {
     }
 
     return (
-        <Layout style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+        <Layout style={styles.layout}>
             <Text
                 onPress={() => navigation.navigate('Home')}
                 style={{ fontSize: 26, fontWeight: 'bold' }}>
                 {param && param.name}
             </Text>
-            { items.length &&
-                <List contentContainerStyle={{flexGrow: 1, justifyContent: 'center'}} style={{width: '60%'}} data={items} renderItem={renderCard} />
+            { items.length> 0 &&
+            <>
+                <List style={styles.list} contentContainerStyle={styles.container} data={items} renderItem={renderCard} />
+                <Button onPress={addToCart}>View Cart</Button>
+            </>
             }
-            <Button onPress={addToCart}>View Cart</Button>
         </Layout>
     );
 }

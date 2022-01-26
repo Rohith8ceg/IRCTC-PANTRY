@@ -3,33 +3,25 @@ import { LogBox } from 'react-native'
 
 import * as eva from '@eva-design/eva'
 import { ApplicationProvider, Menu } from '@ui-kitten/components'
-import { NavigationContainer } from '@react-navigation/native'
-import { createNativeStackNavigator } from '@react-navigation/native-stack'
-import GlobalState from './contexts/GlobalState'
+import GlobalState from './components/GlobalState'
+import UserContext from './components/UserContext'
 
-import MainTabScreen from './screens/MainTabScreen';
-import HomeScreen from './screens/HomeScreen'
-import MenuScreen from './screens/MenuScreen'
-import CartScreen from './screens/CartScreen'
-
-const Stack = createNativeStackNavigator();
+import MainTabScreen from './screens/MainTabScreen'
 
 export default function App() {
+
+  const [user,setUser] = React.useState({name:"",phone:null,error:false})
+
   LogBox.ignoreLogs(['Setting a timer',"It looks like you're using the development build of the Firebase JS SDK."]);
   const [cartlist, setCartlist] = React.useState({});
   return (
-    <GlobalState.Provider value={[cartlist, setCartlist]}>
-      <ApplicationProvider { ...eva } theme={eva.light}>
-        <NavigationContainer>
-          <Stack.Navigator>
-            <Stack.Screen name="Home" component={HomeScreen} />
-            <Stack.Screen name="Menu" component={MenuScreen} />
-            <Stack.Screen name="Cart" component={CartScreen} />
-          </Stack.Navigator>
-        </NavigationContainer>
-      </ApplicationProvider>
-    </GlobalState.Provider>
-    
+  <GlobalState.Provider value={[cartlist, setCartlist]}>
+    <ApplicationProvider { ...eva } theme={eva.light}>
+      <UserContext.Provider value={[user,setUser]}>
+        <MainTabScreen/>
+      </UserContext.Provider>
+    </ApplicationProvider>
+  </GlobalState.Provider>
     );
 }
 

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { View, TextInput, StyleSheet } from 'react-native';
 import { Layout, Text, Card, List, Button } from '@ui-kitten/components';
-import GlobalState from '../contexts/GlobalState';
+import GlobalState from '../components/GlobalState';
 import db from "../firebaseConfig";
 
 export default function CartScreen({ navigation, route }) {
@@ -91,7 +91,6 @@ export default function CartScreen({ navigation, route }) {
         });
 
         //adding order
-
         var string = JSON.stringify(finalList);
         db.collection('orders')
         .add({
@@ -104,7 +103,6 @@ export default function CartScreen({ navigation, route }) {
         .then(() => {
             console.log('Order added!');
         });
-
     }
 
 
