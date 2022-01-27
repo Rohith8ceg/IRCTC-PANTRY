@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Layout, Text, Card, List, Button } from '@ui-kitten/components'
+import { Layout, Text, List, ListItem } from '@ui-kitten/components'
 import { StyleSheet } from 'react-native'
 import db from "../firebaseConfig"
 import UserContext from '../components/UserContext'
@@ -19,12 +19,13 @@ export default function OrderStatusScreen({ navigation }) {
         console.log("getData:")
         db
         .collection("users")
-        .where("phone", "==", user.phone)
+        .where("phone", "==", user.phone )
         .get()
         .then((querySnapshot)=>{
             querySnapshot.forEach((doc) => {
                 // console.log(doc.data())
                 let tempOrders = doc.data().order
+                tempOrders = tempOrders.reverse()
                 if(tempOrders){
                     let temp = new Array(0)
                     tempOrders.forEach((order)=>{
@@ -73,11 +74,17 @@ export default function OrderStatusScreen({ navigation }) {
 
     const renderCard = (param)=>{
         return (
-            <Card status={'basic'} style={styles.card} >
-                <Text category={'h6'}>{(param.item.datetime.toDate().toLocaleString())}</Text>
-                <Text>Total: ₹{param.item.total}</Text>
-                <Text>Status: {getStatus(param.item.status)}</Text>
-            </Card>
+            <ListItem
+                title={(param.item.datetime.toDate().toLocaleString())}
+                description={`Total: ₹${param.item.total}`}
+                accessoryRight={(props)=>{
+                    const prop = props
+                    delete(prop.style.height)
+                    delete(prop.style.width)
+                return (
+                    <Text>{getStatus(param.item.status)}</Text>
+                )}}
+            />
         )
     }
 
@@ -87,11 +94,11 @@ export default function OrderStatusScreen({ navigation }) {
             <Layout style={styles.layout} >
                 <Text
                     onPress={getData}
-                    style={{ fontSize: 26, fontWeight: 'bold' }}> {user.name}'s Order Status
+                    style={{ fontSize: 26, fontWeight: 'bold', marginBottom: 50 }}> {user.name}'s Order Status
                 </Text>
                 {orders.length > 0 &&
-                <List style={{flexGrow:0, marginTop:50, width:'80%', height:'60%'}} contentContainerStyle={{flexGrow:1, justifyContent: 'space-evenly', alignItems:'stretch'}} data={orders} renderItem={renderCard} />
-            }
+                <List style={{flexGrow:0, marginTop:50, width:'80%'}} contentContainerStyle={{flexGrow:1, justifyContent: 'center', alignItems:'stretch'}} data={orders} renderItem={renderCard} />
+                }
             </Layout>
         }
         { !user.phone &&

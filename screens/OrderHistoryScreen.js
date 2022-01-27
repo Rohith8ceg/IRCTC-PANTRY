@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Layout, Text, Card, List, Button } from '@ui-kitten/components'
+import { Layout, Text, ListItem, List } from '@ui-kitten/components'
 import db from "../firebaseConfig"
 
 import LoginScreen from './LoginScreen'
@@ -55,16 +55,16 @@ export default function OrderHistoryScreen({ navigation }) {
     const styles = StyleSheet.create({
         card:{flex:1, alignItems: 'center', flexGrow: 1 },
         layout: { flex: 1, justifyContent:'center', alignItems: 'center' },
-        list: {flexGrow:0, marginTop:50, width:'80%', height:'60%'},
-        container:{flexGrow:1, justifyContent: 'space-evenly', alignItems:'stretch'}
+        list: {flexGrow:0, marginTop:50, width:'80%'},
+        container: {flexGrow:1, justifyContent: 'center', alignItems:'stretch'},
     })
 
     const renderCard = (param)=>{
         return (
-            <Card status={'basic'} style={styles.card} >
-                <Text category={'h6'}>{(param.item.datetime.toDate().toLocaleString())}</Text>
-                <Text>Total: ₹{param.item.total}</Text>
-            </Card>
+            <ListItem
+                title={(param.item.datetime.toDate().toLocaleString())}
+                description={`Total: ₹${param.item.total}`}
+            />
         )
     }
 
