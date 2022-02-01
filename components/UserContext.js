@@ -1,5 +1,8 @@
-import React from "react"
+import React from "react";
 
-const UserContext = React.createContext([{name: null, phone: null, error: false},()=>{}])
+const UserContext = React.createContext([
+  { name: null, phone: null, error: false },
+  () => {},
+]);
 
-export default UserContext
+export default UserContext;
