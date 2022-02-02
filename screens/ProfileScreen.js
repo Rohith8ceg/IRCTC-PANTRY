@@ -45,7 +45,7 @@ export default function ProfileScreen({ navigation }) {
       justifyContent: "space-between",
       alignItems: "center",
     },
-    pb: { marginBottom: 20, fontSize: 32, textAlign: "center" },
+    pb: { marginBottom: 20, textAlign: "center" },
   });
 
   const logout = () => {
@@ -65,9 +65,9 @@ export default function ProfileScreen({ navigation }) {
             Profile
           </Text>
           <View>
-            <Text style={styles.pb}>User Name: {user.name}</Text>
-            <Text style={styles.pb}>Phone Number: {user.phone}</Text>
-            <Text style={styles.pb}>Number of Orders: {orders.length}</Text>
+            <Text category={'h5'} style={styles.pb}>User Name: {user.name}</Text>
+            <Text category={'h5'} style={styles.pb}>Phone Number: {user.phone}</Text>
+            <Text category={'h5'} style={styles.pb}>Number of Orders: {orders.length}</Text>
           </View>
           <Button style={{ marginBottom: 20 }} onPress={logout} size={"small"}>
             Logout
