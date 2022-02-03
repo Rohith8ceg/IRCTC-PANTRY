@@ -212,7 +212,7 @@ export default function CartScreen({ navigation, route }) {
     let flag = 0;
     let errMsg = "";
     let regx = {
-      name: new RegExp("[a-zA-Z]+( [a-zA-Z])*"),
+      name: new RegExp(`^[a-zA-Z][a-zA-Z\\s]*$`),
       // name: new RegExp("([A-Z][a-z]*|[A-Z][a-z]*\\s[A-Z][a-z]*|[A-Z]\\s[A-Z][a-z]*\\s[A-Z][a-z]*)"),
       phone: new RegExp("(\\d{10})"),
       train: new RegExp("(\\d{5})"),

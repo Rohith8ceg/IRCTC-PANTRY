@@ -4,6 +4,7 @@ import { StyleSheet } from "react-native";
 import db from "../firebaseConfig";
 import UserContext from "../components/UserContext";
 import LoginScreen from "./LoginScreen";
+import PhoneLogin from "./PhoneLogin";
 import GlobalState from "../components/GlobalState";
 
 export default function OrderStatusScreen({ navigation }) {
@@ -121,10 +122,9 @@ export default function OrderStatusScreen({ navigation }) {
         <Layout
           style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
         >
-          <LoginScreen />
+          <PhoneLogin />
         </Layout>
       )}
-      {/* <Button onPress={()=>{ navigation.navigate('Home')}}>New Booking</Button> */}
     </>
   );
 }

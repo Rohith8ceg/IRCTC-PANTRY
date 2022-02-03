@@ -5,6 +5,7 @@ import db from "../firebaseConfig";
 import LoginScreen from "./LoginScreen";
 import UserContext from "../components/UserContext";
 import { StyleSheet, View } from "react-native";
+import PhoneLogin from "./PhoneLogin";
 
 export default function ProfileScreen({ navigation }) {
   const [orders, setOrders] = React.useState(new Array(0));
@@ -45,7 +46,7 @@ export default function ProfileScreen({ navigation }) {
       justifyContent: "space-between",
       alignItems: "center",
     },
-    pb: { marginBottom: 20, fontSize: 32, textAlign: "center" },
+    pb: { marginBottom: 20, textAlign: "center" },
   });
 
   const logout = () => {
@@ -65,9 +66,9 @@ export default function ProfileScreen({ navigation }) {
             Profile
           </Text>
           <View>
-            <Text style={styles.pb}>User Name: {user.name}</Text>
-            <Text style={styles.pb}>Phone Number: {user.phone}</Text>
-            <Text style={styles.pb}>Number of Orders: {orders.length}</Text>
+            <Text category={'h5'} style={styles.pb}>User Name: {user.name}</Text>
+            <Text category={'h5'} style={styles.pb}>Phone Number: {user.phone}</Text>
+            <Text category={'h5'} style={styles.pb}>Number of Orders: {orders.length}</Text>
           </View>
           <Button style={{ marginBottom: 20 }} onPress={logout} size={"small"}>
             Logout
@@ -76,7 +77,7 @@ export default function ProfileScreen({ navigation }) {
       )}
       {!user.phone && (
         <Layout style={styles.layout}>
-          <LoginScreen />
+          <PhoneLogin/>
         </Layout>
       )}
     </>

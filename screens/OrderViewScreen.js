@@ -95,7 +95,7 @@ export default function OrderViewScreen({ navigation, route }) {
                   style={{ flexGrow: 0 }}
                   scrollEnabled={false}
                   contentContainerStyle={{
-                    flexGrow: 1,
+                    flexGrow: 0,
                     justifyContent: "center",
                     alignItems: "stretch",
                   }}
