@@ -5,6 +5,7 @@ import db from "../firebaseConfig";
 import LoginScreen from "./LoginScreen";
 import UserContext from "../components/UserContext";
 import { StyleSheet, View } from "react-native";
+import PhoneLogin from "./PhoneLogin";
 
 export default function OrderHistoryScreen({ navigation }) {
   const [orders, setOrders] = React.useState(new Array(0));
@@ -89,7 +90,7 @@ export default function OrderHistoryScreen({ navigation }) {
       )}
       {!user.phone && (
         <Layout style={styles.layout}>
-          <LoginScreen />
+          <PhoneLogin/>
         </Layout>
       )}
     </>

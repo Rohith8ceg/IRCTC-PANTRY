@@ -12,7 +12,6 @@ import {
   FirebaseRecaptchaVerifierModal,
   FirebaseRecaptchaBanner,
 } from "expo-firebase-recaptcha";
-// import * as firebase from "firebase/app";
 import firebase from "firebase/app";
 import "firebase/auth";
 import db from "../firebaseConfig";
@@ -35,7 +34,7 @@ export default function PhoneLogin() {
     ? firebase.app().options
     : undefined;
   const [message, showMessage] = React.useState(
-    !firebaseConfig || Platform.OS === "wesb"
+    !firebaseConfig || Platform.OS === "web"
       ? {
           text: "To get started, provide a valid firebase config in App.js and open this snack on an iOS or Android device.",
           color: "basic",
@@ -181,26 +180,7 @@ export default function PhoneLogin() {
             <Text status={message.color}>{message.text}</Text>
           </Card>
         </Modal>
-        // <TouchableOpacity
-        //   style={[
-        //     StyleSheet.absoluteFill,
-        //     { backgroundColor: 0xffffffee, justifyContent: "center" },
-        //   ]}
-        //   onPress={() => showMessage(undefined)}
-        // >
-        //   <Text
-        //     style={{
-        //       color: message.color || "blue",
-        //       fontSize: 17,
-        //       textAlign: "center",
-        //       margin: 20,
-        //     }}
-        //   >
-        //     {message.text}
-        //   </Text>
-        // </TouchableOpacity>
       )}
-      {/* {attemptInvisibleVerification && <FirebaseRecaptchaBanner />} */}
     </View>
   );
 }

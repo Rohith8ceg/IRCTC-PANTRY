@@ -122,11 +122,9 @@ export default function OrderStatusScreen({ navigation }) {
         <Layout
           style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
         >
-          {/* <LoginScreen /> */}
           <PhoneLogin />
         </Layout>
       )}
-      {/* <Button onPress={()=>{ navigation.navigate('Home')}}>New Booking</Button> */}
     </>
   );
 }
